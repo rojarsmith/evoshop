@@ -4,9 +4,25 @@ import log from 'loglevel';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+//Redux
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux';
+import { createLogger } from 'redux-logger';
+import thunk from 'redux-thunk';
 
 console.info("NODE_ENV=" + process.env.NODE_ENV);
 console.info("REACT_APP_ENVIRONMENT=" + process.env.REACT_APP_ENVIRONMENT);
+
+//Redux
+const logger = createLogger();
+
+let middleware = [thunk];
+
+if (process.env.NODE_ENV === 'development') {
+  middleware = [...middleware, logger];
+}
+
+// const store = createStore(null, applyMiddleware(...middleware));
 
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
   log.setLevel("info");
