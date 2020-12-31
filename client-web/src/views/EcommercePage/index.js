@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import Hidden from "@material-ui/core/Hidden";
 import log from 'loglevel';
 import DocumentTitle from 'components/DocumentTitle';
+import HorizontalSlider from "./HorizontalSlider";
 
 export default function EcommercePage({ ...rest }) {
     log.info("[Home]: Rendering EcommercePage page.");
@@ -11,6 +13,9 @@ export default function EcommercePage({ ...rest }) {
             {process.env.REACT_APP_SITE_NAME}
             <br/>
             EcommercePage
+            <Hidden only={['xs']}>
+                <HorizontalSlider/>
+            </Hidden>
         </div>
     );
 }
