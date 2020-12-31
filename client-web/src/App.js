@@ -1,7 +1,7 @@
 import log from "loglevel";
 import { createBrowserHistory } from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
-import EcommercePage from "views/EcommercePage/EcommercePage.js";
+import EcommercePage from "views/EcommercePage";
 
 function App() {
   log.info(`[App]: Rendering App Component`);
