@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
+import allReducer from "redux/reducer"
 
 console.info("NODE_ENV=" + process.env.NODE_ENV);
 console.info("REACT_APP_ENVIRONMENT=" + process.env.REACT_APP_ENVIRONMENT);
@@ -22,7 +23,7 @@ if (process.env.NODE_ENV === 'development') {
   middleware = [...middleware, logger];
 }
 
-// const store = createStore(null, applyMiddleware(...middleware));
+const store = createStore(allReducer, applyMiddleware(...middleware));
 
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
   log.setLevel("info");
@@ -38,7 +39,9 @@ log.info("[index]: Begin ReactDOM.");
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

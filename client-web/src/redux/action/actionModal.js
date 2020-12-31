@@ -1,0 +1,4 @@
+export const actionModals = {
+    OPEN_SIMPLE_MODAL: 'OPEN_SIMPLE_MODAL',
+    CLOSE_SIMPLE_MODAL: 'CLOSE_SIMPLE_MODAL'
+}
