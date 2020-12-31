@@ -1,6 +1,7 @@
 import log from "loglevel";
 import { createBrowserHistory } from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
+import EcommercePage from "views/EcommercePage/EcommercePage.js";
 
 function App() {
   log.info(`[App]: Rendering App Component`);
@@ -8,7 +9,7 @@ function App() {
     <Router history={createBrowserHistory()}>
       {
         <Switch>
-          
+          <Route path="/" exact component={EcommercePage} />
         </Switch>
       }
     </Router>
