@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import log from 'loglevel';
 
 export default function EcommercePage({ ...rest }) {
-    log.info("[Home]: Rendering Home Component");
+    log.info("[Home]: Rendering EcommercePage Component");
     return (
         <div>EcommercePage</div>
     );
