@@ -11,6 +11,8 @@ import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import allReducer from "redux/reducer"
 
+import 'swiper/swiper.min.css'
+
 console.info("NODE_ENV=" + process.env.NODE_ENV);
 console.info("REACT_APP_ENVIRONMENT=" + process.env.REACT_APP_ENVIRONMENT);
 
