@@ -6,7 +6,7 @@ import DocumentTitle from 'components/DocumentTitle';
 import HorizontalSlider from "./HorizontalSlider";
 
 export default function EcommercePage({ ...rest }) {
-    log.info("[Home]: Rendering EcommercePage page.");
+    log.info("[EcommercePage]: Rendering EcommercePage page.");
     return (
         <div>
             <DocumentTitle title={"Online Shopping for Women, Men, Fashion & Lifestyle - " + process.env.REACT_APP_SITE_NAME} />
