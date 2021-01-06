@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import log from 'loglevel';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { HelmetProvider } from 'react-helmet-async';
 //Redux
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux';
@@ -39,7 +40,9 @@ log.info("[index]: Begin ReactDOM.");
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
