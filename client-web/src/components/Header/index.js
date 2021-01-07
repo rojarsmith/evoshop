@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import log from "loglevel";
 
 export default function Header(props) {
-    log.info(`[NavBar]: Rendering Head Component`)
+    log.info(`[Head]: Rendering Head Component`)
     return(
         <>
         </>

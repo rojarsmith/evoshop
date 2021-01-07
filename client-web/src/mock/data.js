@@ -1,4 +1,31 @@
-export const horizontalSliderData = (content = "Slide") => {
+import imageHS1 from './horizontal-slider/hs1-1920x504.jpg';
+import imageHS2 from './horizontal-slider/hs2-1920x504.jpg';
+import imageHS3 from './horizontal-slider/hs3-1920x504.jpg';
+
+export const horizontalSliderData1 = (content = "Slide") => {
+    const images = [
+        {
+            imageURL: imageHS1,
+            imageLocalPath: imageHS1
+        },
+        {
+            imageURL: imageHS2,
+            imageLocalPath: imageHS2
+        },
+        {   
+            imageURL: imageHS3,
+            imageLocalPath: imageHS3
+        }
+    ];
+
+    return images.map(({imageURL, imageLocalPath}, idx) => ({
+        idx: idx + 1,
+        imageURL,
+        imageLocalPath
+    }));
+};
+
+export const horizontalSliderData2 = (content = "Slide") => {
     const colors = [
         "#4a9eda",
         "#6872e0",
