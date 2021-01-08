@@ -5,15 +5,14 @@ import log from 'loglevel';
 import DocumentTitle from 'components/DocumentTitle';
 import HorizontalSlider from "components/HorizontalSlider";
 import 'assets/styles/index.css'
+import Header from 'components/Header'
 
 export default function EcommercePage({ ...rest }) {
     log.info("[EcommercePage]: Rendering EcommercePage page.");
     return (
         <div>
             <DocumentTitle title={"Online Shopping for Women, Men, Fashion & Lifestyle - " + process.env.REACT_APP_SITE_NAME} />
-            {process.env.REACT_APP_SITE_NAME}
-            <br />
-            EcommercePage
+            <Header />
             <Hidden only={['xs']}>
                 <HorizontalSlider />
             </Hidden>
