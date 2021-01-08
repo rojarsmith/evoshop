@@ -23,7 +23,7 @@
     "redux-form": "^8.3.7",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "swiper": "^6.4.5",
+    "swiper": "^5.4.5",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

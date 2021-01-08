@@ -4,6 +4,7 @@ import Hidden from "@material-ui/core/Hidden";
 import log from 'loglevel';
 import DocumentTitle from 'components/DocumentTitle';
 import HorizontalSlider from "components/HorizontalSlider";
+import 'assets/styles/index.css'
 
 export default function EcommercePage({ ...rest }) {
     log.info("[EcommercePage]: Rendering EcommercePage page.");
