@@ -77,8 +77,11 @@ export default function Header(props) {
                             </Grid>
                         </Grid>
                         <Hidden xsDown>
+                            <div className={classes.growHalf} />
                             {renderIndependentElem(changeAuthStatusHandler, authenticationIcon, authenticationLabel, 2)}
+                            <div className={classes.growHalf} />
                             {renderIndependentElem(null, <PersonAdd />, "Sign Up", 2)}
+                            <div className={classes.growQuarter} />
                             {renderIndependentElem(changePageToShoppingCartHandler, <BadgeButton />, "Cart", 0)}
                         </Hidden>
                     </Toolbar>
