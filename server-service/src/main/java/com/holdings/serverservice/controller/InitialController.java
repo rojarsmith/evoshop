@@ -29,9 +29,9 @@ public class InitialController {
 		try {
 			// Person 1
 			UserAccount user = new UserAccount();
-			user.setUserName("aaa111");
+			user.setUserName("aa11");
 			user.setPassword(passwordEncoder.encode("bbbb1111"));
-			user.setEmail("rojarsmith@gmail.com");
+			user.setEmail("rojarsmith@live.com");
 			user.setEmailVerified(true);
 			user.setRegisterTime(Instant.now());
 			user.setRegisterIp("127.0.0.1");
