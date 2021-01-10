@@ -1,0 +1,23 @@
+package com.holdings.serverservice;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties
+public class ServiceConfig {
+	@Value("${spring.profiles.active}")
+	private String active;
+
+	public boolean isDev() {
+		if (active.toUpperCase().equals("DEV")) {
+			return true;
+		}
+
+		return false;
+	}
+}
