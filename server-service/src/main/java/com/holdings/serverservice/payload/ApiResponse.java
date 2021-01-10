@@ -14,8 +14,19 @@ public class ApiResponse {
 
 	private String trace;
 
-	public ApiResponse(String message) {
-		this(message, null);
+	public ApiResponse(boolean success, String message, Object data, String trace) {
+		this.complete = success;
+		this.message = message;
+		this.data = data;
+		this.trace = trace;
+	}
+
+	public ApiResponse(boolean success, String message, Object data) {
+		this(success, message, data, null);
+	}
+	
+	public ApiResponse(boolean success, String message) {
+		this(success, message, null);
 	}
 
 	public ApiResponse(String message, Exception exception) {

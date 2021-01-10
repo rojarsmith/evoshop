@@ -22,7 +22,7 @@ public class ExceptionController {
 		}
 		System.out.println("[handleException]: " + message);
 
-		ApiResponse resp = new ApiResponse(message);
+		ApiResponse resp = new ApiResponse(false, message);
 		if (serviceConfig.isDev()) {
 			resp = new ApiResponse(message, exception);
 		}
