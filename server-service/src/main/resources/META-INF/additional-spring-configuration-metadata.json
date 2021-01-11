@@ -1,0 +1,7 @@
+{"properties": [
+  {
+    "name": "app.service.domain",
+    "type": "java.lang.String",
+    "description": "Service's domain."
+  }
+ ]}

@@ -13,6 +13,9 @@ public class ServiceConfig {
 	@Value("${spring.profiles.active}")
 	private String active;
 
+    @Value("${app.service.domain}")
+    private String serviceDomain;
+	
 	public boolean isDev() {
 		if (active.toUpperCase().equals("DEV")) {
 			return true;
