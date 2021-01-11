@@ -6,7 +6,7 @@ Program arguments:
 
 ```bash
 # Windows
---spring.profiles.active=dev --spring.config.additional-location="E:\\backend\\"
+--spring.profiles.active=dev --spring.config.additional-location="T:\\server-service\\config/"
 ```
 
 

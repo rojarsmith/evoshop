@@ -6,7 +6,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 @Service
-public class MailContentBuilderService {
+public class MailContentBuilder {
 	public enum Template {
 		SIGN_UP, RESET_PASSWORD
 	}
@@ -14,7 +14,7 @@ public class MailContentBuilderService {
 	private TemplateEngine templateEngine;
 
 	@Autowired
-	public MailContentBuilderService(TemplateEngine templateEngine) {
+	public MailContentBuilder(TemplateEngine templateEngine) {
 		this.templateEngine = templateEngine;
 	}
 

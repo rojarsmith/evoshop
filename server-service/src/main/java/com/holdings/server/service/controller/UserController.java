@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,8 +21,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.holdings.server.service.ServiceConfig;
 import com.holdings.server.service.entity.ConfirmationToken;
 import com.holdings.server.service.entity.UserAccount;
-import com.holdings.server.service.extra.MailContentBuilderService;
-import com.holdings.server.service.extra.MailContentBuilderService.Template;
+import com.holdings.server.service.extra.EmailSenderService;
+import com.holdings.server.service.extra.MailContentBuilder;
+import com.holdings.server.service.extra.MailContentBuilder.Template;
+import com.holdings.server.service.payload.ApiResponse;
 import com.holdings.server.service.payload.UserAccountCreationRequest;
 import com.holdings.server.service.repository.ConfirmationTokenRepository;
 import com.holdings.server.service.repository.UserAccountRepository;
@@ -45,10 +48,16 @@ public class UserController {
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private MailContentBuilderService mailContentBuilderService;
+	private MailContentBuilder mailContentBuilder;
+	
+    @Autowired
+    private EmailSenderService emailSenderService;
 
 	@Autowired
 	private Miscellaneous miscellaneous;
+
+    @Value("${spring.mail.username}")
+    private String emailFrom;
 
 	@PostMapping(value = { "/v{version:\\d}/user/signup" })
 	public ResponseEntity<?> userSignup(HttpServletRequest request,
@@ -99,9 +108,12 @@ public class UserController {
 				.buildAndExpand().encode().toUri();
 
 		String[] mailList = { newUser.getEmail() };
-		String mailContent = mailContentBuilderService.generateMailContent(locationConfirm.toString(),
+		String mailContent = mailContentBuilder.generateMailContent(locationConfirm.toString(),
 				Template.SIGN_UP);
 
-		return ResponseEntity.created(null).body(null);
+        emailSenderService.sendComplexEmail(mailList, emailFrom,
+                "Complete Registration! You need to confirm the e-mail for full functions.", mailContent);
+		
+		return ResponseEntity.created(null).body(new ApiResponse(true, "Registe user account successfully."));
 	}
 }
