@@ -21,9 +21,8 @@ import lombok.Data;
 @Data
 public class ConfirmationToken {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "token_id")
-	private long tokenid;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
 	@Column(name = "confirmation_token")
 	private String confirmationToken;
@@ -48,5 +47,6 @@ public class ConfirmationToken {
 		// confirmationToken = UUID.randomUUID().toString(); // Too long.
 		Long uuid = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
 		confirmationToken = uuid.toString().substring(uuid.toString().length() - 6, uuid.toString().length());
+		createdDate = new Date();
 	}
 }

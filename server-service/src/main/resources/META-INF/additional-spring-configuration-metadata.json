@@ -3,5 +3,10 @@
     "name": "app.service.domain",
     "type": "java.lang.String",
     "description": "Service's domain."
-  }
+  },
+  {
+    "name": "app.client.web.domain",
+    "type": "java.lang.String",
+    "description": "Web client's domain."
+  }  
  ]}

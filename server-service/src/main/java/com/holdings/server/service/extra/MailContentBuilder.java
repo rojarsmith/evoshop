@@ -8,7 +8,7 @@ import org.thymeleaf.context.Context;
 @Service
 public class MailContentBuilder {
 	public enum Template {
-		SIGN_UP, RESET_PASSWORD
+		SIGN_UP, CONFIRM_AGAIN, RESET_PASSWORD
 	}
 
 	private TemplateEngine templateEngine;
@@ -24,6 +24,9 @@ public class MailContentBuilder {
 		case SIGN_UP:
 			context.setVariable("confirm", url);
 			return templateEngine.process("confirmMail", context);
+		case CONFIRM_AGAIN:
+			context.setVariable("confirm", url);
+			return templateEngine.process("confirmAgainMail", context);
 //		default:
 //			context.setVariable("confirm", url);
 //			return templateEngine.process("resetPassword", context);

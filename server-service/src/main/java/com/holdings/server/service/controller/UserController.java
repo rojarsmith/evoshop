@@ -3,6 +3,7 @@ package com.holdings.server.service.controller;
 import java.net.URI;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,11 +27,11 @@ import com.holdings.server.service.extra.EmailSenderService;
 import com.holdings.server.service.extra.MailContentBuilder;
 import com.holdings.server.service.extra.MailContentBuilder.Template;
 import com.holdings.server.service.payload.ApiResponse;
+import com.holdings.server.service.payload.RefreshConfirmationTokenRequest;
 import com.holdings.server.service.payload.UserAccountCreationRequest;
 import com.holdings.server.service.repository.ConfirmationTokenRepository;
 import com.holdings.server.service.repository.UserAccountRepository;
 import com.holdings.server.service.utility.IpUtils;
-import com.holdings.server.service.utility.Miscellaneous;
 import com.holdings.server.service.utility.ValueValidate;
 
 @RestController
@@ -50,12 +51,12 @@ public class UserController {
 
 	@Autowired
 	private MailContentBuilder mailContentBuilder;
-	
-    @Autowired
-    private EmailSenderService emailSenderService;
 
-    @Value("${spring.mail.username}")
-    private String emailFrom;
+	@Autowired
+	private EmailSenderService emailSenderService;
+
+	@Value("${spring.mail.username}")
+	private String emailFrom;
 
 	@PostMapping(value = { "/v{version:\\d}/user/signup" })
 	public ResponseEntity<?> userSignup(HttpServletRequest request,
@@ -100,20 +101,74 @@ public class UserController {
 		confirmationTokenRepository.save(token);
 
 		URI locationConfirm = ServletUriComponentsBuilder
-				.fromUriString(serviceConfig.getServiceDomain() + "/confirm-account/" + token.getConfirmationToken())
+				.fromUriString(serviceConfig.getClientWebDomain() + "/user/confirm/" + token.getConfirmationToken())
 				.buildAndExpand().encode().toUri();
 
 		String[] mailList = { newUser.getEmail() };
-		String mailContent = mailContentBuilder.generateMailContent(locationConfirm.toString(),
-				Template.SIGN_UP);
+		String mailContent = mailContentBuilder.generateMailContent(locationConfirm.toString(), Template.SIGN_UP);
 
-        emailSenderService.sendComplexEmail(mailList, emailFrom,
-                "Complete Registration! You need to confirm the e-mail for full functions.", mailContent);
-        
-        HashMap<String, Object> res = new HashMap<>();
-        res.put("ID", newUser.getId());
-        res.put("UserName", newUser.getUserName());
-		
+		emailSenderService.sendComplexEmail(mailList, emailFrom,
+				"Complete Registration! You need to confirm the e-mail for full functions.", mailContent);
+
+		HashMap<String, Object> res = new HashMap<>();
+		res.put("ID", newUser.getId());
+		res.put("UserName", newUser.getUserName());
+
 		return ResponseEntity.created(null).body(new ApiResponse(true, "Registe user account successfully.", res));
+	}
+
+	@PostMapping(value = { "/v{version:\\d}/user/confirm/refresh" })
+	public ResponseEntity<?> userConfirmRefresh(@Valid @RequestBody RefreshConfirmationTokenRequest request)
+			throws Exception {
+		Optional<UserAccount> user = userAccountRepository.findByUserName(request.getUserName());
+
+		if (user.get() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account name not found.");
+		}
+		
+		if (user.get().getEmailVerified()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account had been verified.");
+		}
+
+		Optional<ConfirmationToken> token = confirmationTokenRepository.findByUser(user.get());
+		
+		if (!token.isPresent()) {
+			ConfirmationToken ntoken = new ConfirmationToken(user.get());
+			while (confirmationTokenRepository.existsByConfirmationToken(ntoken.getConfirmationToken())) {
+				ntoken.freshToken();
+			}
+			confirmationTokenRepository.save(ntoken);
+			
+			return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully."));
+		}
+		
+		token.get().freshToken();
+		int retry = 0;
+		// Try 5 times.
+		while (confirmationTokenRepository.existsByConfirmationToken(token.get().getConfirmationToken())) {
+			token.get().freshToken();
+
+			if (retry >= 6) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+						"Refresh confirmation token failed. Try again.");
+			}
+
+			retry++;
+		}
+
+		confirmationTokenRepository.save(token.get());
+
+		URI locationConfirm = ServletUriComponentsBuilder
+				.fromUriString(
+						serviceConfig.getClientWebDomain() + "/user/confirm/" + token.get().getConfirmationToken())
+				.buildAndExpand().encode().toUri();
+
+		String[] mailList = { user.get().getEmail() };
+		String mailContent = mailContentBuilder.generateMailContent(locationConfirm.toString(), Template.CONFIRM_AGAIN);
+
+		emailSenderService.sendComplexEmail(mailList, emailFrom,
+				"Refresh confirmation token completed, confirm again !", mailContent);
+
+		return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully."));
 	}
 }
