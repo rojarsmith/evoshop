@@ -1,4 +1,4 @@
-package com.holdings.serverservice.controller;
+package com.holdings.server.service.controller;
 
 import java.net.URI;
 import java.time.Instant;
@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.holdings.serverservice.ServiceConfig;
-import com.holdings.serverservice.entity.ConfirmationToken;
-import com.holdings.serverservice.entity.UserAccount;
-import com.holdings.serverservice.payload.UserAccountCreationRequest;
-import com.holdings.serverservice.repository.ConfirmationTokenRepository;
-import com.holdings.serverservice.repository.UserAccountRepository;
-import com.holdings.serverservice.service.MailContentBuilderService;
-import com.holdings.serverservice.service.MailContentBuilderService.Template;
-import com.holdings.serverservice.utility.IpUtils;
-import com.holdings.serverservice.utility.Miscellaneous;
-import com.holdings.serverservice.utility.ValueValidate;
+import com.holdings.server.service.ServiceConfig;
+import com.holdings.server.service.entity.ConfirmationToken;
+import com.holdings.server.service.entity.UserAccount;
+import com.holdings.server.service.extra.MailContentBuilderService;
+import com.holdings.server.service.extra.MailContentBuilderService.Template;
+import com.holdings.server.service.payload.UserAccountCreationRequest;
+import com.holdings.server.service.repository.ConfirmationTokenRepository;
+import com.holdings.server.service.repository.UserAccountRepository;
+import com.holdings.server.service.utility.IpUtils;
+import com.holdings.server.service.utility.Miscellaneous;
+import com.holdings.server.service.utility.ValueValidate;
 
 @RestController
 @RequestMapping(value = { "/api" })

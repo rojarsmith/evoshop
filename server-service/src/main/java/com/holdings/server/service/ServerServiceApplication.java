@@ -1,4 +1,4 @@
-package com.holdings.serverservice;
+package com.holdings.server.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

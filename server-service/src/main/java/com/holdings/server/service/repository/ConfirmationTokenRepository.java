@@ -1,12 +1,12 @@
-package com.holdings.serverservice.repository;
+package com.holdings.server.service.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.holdings.serverservice.entity.ConfirmationToken;
-import com.holdings.serverservice.entity.UserAccount;
+import com.holdings.server.service.entity.ConfirmationToken;
+import com.holdings.server.service.entity.UserAccount;
 
 @Repository
 public interface ConfirmationTokenRepository extends CrudRepository<ConfirmationToken, Long> {

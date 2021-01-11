@@ -1,11 +1,11 @@
-package com.holdings.serverservice.repository;
+package com.holdings.server.service.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.holdings.serverservice.entity.UserAccount;
+import com.holdings.server.service.entity.UserAccount;
 
 @Repository
 public interface UserAccountRepository extends JpaRepository<UserAccount, Long> {

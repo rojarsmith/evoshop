@@ -1,4 +1,4 @@
-package com.holdings.serverservice.utility;
+package com.holdings.server.service.utility;
 
 import java.util.Map;
 import java.util.stream.Collectors;

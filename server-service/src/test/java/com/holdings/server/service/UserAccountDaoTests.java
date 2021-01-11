@@ -1,4 +1,4 @@
-package com.holdings.serverservice;
+package com.holdings.server.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.holdings.serverservice.entity.UserAccount;
-import com.holdings.serverservice.repository.UserAccountRepository;
+import com.holdings.server.service.entity.UserAccount;
+import com.holdings.server.service.repository.UserAccountRepository;
 
 @SpringBootTest
 class UserAccountDaoTests {

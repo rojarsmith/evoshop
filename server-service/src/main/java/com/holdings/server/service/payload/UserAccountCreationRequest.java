@@ -1,4 +1,4 @@
-package com.holdings.serverservice.payload;
+package com.holdings.server.service.payload;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

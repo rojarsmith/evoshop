@@ -1,4 +1,4 @@
-package com.holdings.serverservice.payload;
+package com.holdings.server.service.payload;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

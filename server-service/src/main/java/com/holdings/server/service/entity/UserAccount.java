@@ -1,4 +1,4 @@
-package com.holdings.serverservice.entity;
+package com.holdings.server.service.entity;
 
 import java.time.Instant;
 

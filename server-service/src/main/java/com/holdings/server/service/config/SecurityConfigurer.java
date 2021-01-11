@@ -1,4 +1,4 @@
-package com.holdings.serverservice.config;
+package com.holdings.server.service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

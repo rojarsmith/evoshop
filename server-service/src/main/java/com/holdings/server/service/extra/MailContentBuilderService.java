@@ -1,4 +1,4 @@
-package com.holdings.serverservice.service;
+package com.holdings.server.service.extra;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

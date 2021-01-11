@@ -1,4 +1,4 @@
-package com.holdings.serverservice.controller;
+package com.holdings.server.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.holdings.serverservice.ServiceConfig;
-import com.holdings.serverservice.payload.ApiResponse;
+import com.holdings.server.service.ServiceConfig;
+import com.holdings.server.service.payload.ApiResponse;
 
 @RestControllerAdvice
 public class ExceptionController {

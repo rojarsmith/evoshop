@@ -1,4 +1,4 @@
-package com.holdings.serverservice.controller;
+package com.holdings.server.service.controller;
 
 import java.time.Instant;
 
@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.holdings.serverservice.entity.UserAccount;
-import com.holdings.serverservice.repository.UserAccountRepository;
+import com.holdings.server.service.entity.UserAccount;
+import com.holdings.server.service.repository.UserAccountRepository;
 
 @RestController
 public class InitialController {

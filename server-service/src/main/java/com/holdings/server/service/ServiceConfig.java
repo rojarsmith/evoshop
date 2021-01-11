@@ -1,4 +1,4 @@
-package com.holdings.serverservice;
+package com.holdings.server.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
