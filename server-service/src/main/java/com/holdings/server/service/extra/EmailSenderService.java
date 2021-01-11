@@ -17,37 +17,27 @@ public class EmailSenderService {
 
 	@Autowired
 	public EmailSenderService(JavaMailSender javaMailSender) {
-
 		this.javaMailSender = javaMailSender;
-
 	}
 
 	@Async
 	@Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000l, maxDelay = 2))
-	public void sendSimpleEmail(SimpleMailMessage email) {
-		try {
-			javaMailSender.send(email);
-		} catch (Exception e) {
-			e.getMessage();
-		}
+	public void sendSimpleEmail(SimpleMailMessage email) throws Exception {
+		javaMailSender.send(email);
 	}
 
 	@Async
 	@Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000l, maxDelay = 2))
-	public void sendComplexEmail(String[] to, String from, String subject, String text) {
+	public void sendComplexEmail(String[] to, String from, String subject, String text) throws Exception {
 		MimeMessage message = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = null;
-		try {
-			helper = new MimeMessageHelper(message, true);
+		helper = new MimeMessageHelper(message, true);
 
-			helper.setFrom(from);
-			helper.setTo(to);
-			helper.setSubject(subject);
-			helper.setText(text, true);
+		helper.setFrom(from);
+		helper.setTo(to);
+		helper.setSubject(subject);
+		helper.setText(text, true);
 
-			javaMailSender.send(message);
-		} catch (Exception e) {
-			e.getMessage();
-		}
+		javaMailSender.send(message);
 	}
 }

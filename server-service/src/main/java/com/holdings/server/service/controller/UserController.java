@@ -2,6 +2,7 @@ package com.holdings.server.service.controller;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -53,9 +54,6 @@ public class UserController {
     @Autowired
     private EmailSenderService emailSenderService;
 
-	@Autowired
-	private Miscellaneous miscellaneous;
-
     @Value("${spring.mail.username}")
     private String emailFrom;
 
@@ -94,8 +92,6 @@ public class UserController {
 		user.setActived(true);
 		UserAccount newUser = userAccountRepository.save(user);
 
-		String path = miscellaneous.getRequestMappingPath("userSignup(");
-
 		// Confirmation Mail
 		ConfirmationToken token = new ConfirmationToken(user);
 		while (confirmationTokenRepository.existsByConfirmationToken(token.getConfirmationToken())) {
@@ -113,7 +109,11 @@ public class UserController {
 
         emailSenderService.sendComplexEmail(mailList, emailFrom,
                 "Complete Registration! You need to confirm the e-mail for full functions.", mailContent);
+        
+        HashMap<String, Object> res = new HashMap<>();
+        res.put("ID", newUser.getId());
+        res.put("UserName", newUser.getUserName());
 		
-		return ResponseEntity.created(null).body(new ApiResponse(true, "Registe user account successfully."));
+		return ResponseEntity.created(null).body(new ApiResponse(true, "Registe user account successfully.", res));
 	}
 }
