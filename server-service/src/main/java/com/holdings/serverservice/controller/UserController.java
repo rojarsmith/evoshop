@@ -19,6 +19,7 @@ import com.holdings.serverservice.entity.UserAccount;
 import com.holdings.serverservice.payload.UserAccountCreationRequest;
 import com.holdings.serverservice.repository.UserAccountRepository;
 import com.holdings.serverservice.utility.IpUtils;
+import com.holdings.serverservice.utility.Miscellaneous;
 import com.holdings.serverservice.utility.ValueValidate;
 
 @RestController
@@ -29,6 +30,9 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private Miscellaneous miscellaneous;
     
 	@PostMapping(value = { "/v{version:\\d}/user/signup" })
 	public ResponseEntity<?> userSignup(HttpServletRequest request,
@@ -64,6 +68,9 @@ public class UserController {
         user.setRegisterIp(IpUtils.getIpAddr(request));
         user.setActived(true);
         UserAccount result = userAccountRepository.save(user);
+        
+        String path = miscellaneous.getRequestMappingPath("userSignup(");
+        
         
 		return ResponseEntity.created(null).body(null);
 	}
