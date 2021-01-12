@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -122,26 +124,26 @@ public class UserController {
 			throws Exception {
 		Optional<UserAccount> user = userAccountRepository.findByUserName(request.getUserName());
 
-		if (user.get() == null) {
+		if (!user.isPresent()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account name not found.");
 		}
-		
+
 		if (user.get().getEmailVerified()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account had been verified.");
 		}
 
 		Optional<ConfirmationToken> token = confirmationTokenRepository.findByUser(user.get());
-		
+
 		if (!token.isPresent()) {
 			ConfirmationToken ntoken = new ConfirmationToken(user.get());
 			while (confirmationTokenRepository.existsByConfirmationToken(ntoken.getConfirmationToken())) {
 				ntoken.freshToken();
 			}
 			confirmationTokenRepository.save(ntoken);
-			
+
 			return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully."));
 		}
-		
+
 		token.get().freshToken();
 		int retry = 0;
 		// Try 5 times.
@@ -170,5 +172,31 @@ public class UserController {
 				"Refresh confirmation token completed, confirm again !", mailContent);
 
 		return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully."));
+	}
+
+	@GetMapping(value = { "/v{version:\\d}/user/confirm/{token:\\d{6,6}}" })
+	public ResponseEntity<?> userConfirmToken(@PathVariable String version, @Valid @PathVariable("token") String token) throws Exception {
+		Optional<ConfirmationToken> ctoken = confirmationTokenRepository.findByConfirmationToken(token);
+		if (!ctoken.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid confirmation token.");
+		}
+
+		Optional<UserAccount> user = userAccountRepository.findById(ctoken.get().getUser().getId());
+		if (!user.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid user.");
+		}
+
+		if (user.get().getEmailVerified()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account had been verified.");
+		}
+
+		user.get().setEmailVerified(true);
+		userAccountRepository.save(user.get());
+
+		HashMap<String, Object> res = new HashMap<>();
+		res.put("ID", user.get().getId());
+		res.put("UserName", user.get().getUserName());
+
+		return ResponseEntity.ok().body(new ApiResponse(true, "User confirm successfully.", res));
 	}
 }
