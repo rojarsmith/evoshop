@@ -1,7 +1,9 @@
 package com.holdings.server.service.controller;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -12,11 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,11 +33,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.holdings.server.service.ServiceConfig;
 import com.holdings.server.service.entity.ConfirmationToken;
 import com.holdings.server.service.entity.UserAccount;
+import com.holdings.server.service.extra.CustomUserDetailsService;
 import com.holdings.server.service.extra.EmailSenderService;
 import com.holdings.server.service.extra.MailContentBuilder;
 import com.holdings.server.service.extra.MailContentBuilder.Template;
 import com.holdings.server.service.payload.ApiResponse;
 import com.holdings.server.service.payload.RefreshConfirmationTokenRequest;
+import com.holdings.server.service.payload.UserAccountAuthenticationRequest;
 import com.holdings.server.service.payload.UserAccountCreationRequest;
 import com.holdings.server.service.repository.ConfirmationTokenRepository;
 import com.holdings.server.service.repository.UserAccountRepository;
@@ -47,6 +57,12 @@ public class UserController {
 
 	@Autowired
 	private ConfirmationTokenRepository confirmationTokenRepository;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -175,7 +191,8 @@ public class UserController {
 	}
 
 	@GetMapping(value = { "/v{version:\\d}/user/confirm/{token:\\d{6,6}}" })
-	public ResponseEntity<?> userConfirmToken(@PathVariable String version, @Valid @PathVariable("token") String token) throws Exception {
+	public ResponseEntity<?> userConfirmToken(@PathVariable String version, @Valid @PathVariable("token") String token)
+			throws Exception {
 		Optional<ConfirmationToken> ctoken = confirmationTokenRepository.findByConfirmationToken(token);
 		if (!ctoken.isPresent()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid confirmation token.");
@@ -198,5 +215,39 @@ public class UserController {
 		res.put("UserName", user.get().getUserName());
 
 		return ResponseEntity.ok().body(new ApiResponse(true, "User confirm successfully.", res));
+	}
+
+	@PostMapping(value = { "/v{version:\\d}/user/authentication/token" })
+	public ResponseEntity<?> userAuthenticationToken(@RequestHeader(value = "Authorization") String headerData)
+			throws Exception {
+		UserAccountAuthenticationRequest authenticationRequest = new UserAccountAuthenticationRequest();
+		String[] data = headerData.split(" ");
+		byte[] decoded = Base64.getDecoder().decode(data[1]);
+		String decodedStr = new String(decoded, StandardCharsets.UTF_8);
+		data = decodedStr.split(":");
+
+		authenticationRequest.setUsername(data[0]);
+		authenticationRequest.setPassword(data[1]);
+
+		Authentication ar = new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
+				authenticationRequest.getPassword());
+
+		try {
+			ar = authenticationManager.authenticate(ar);
+		} catch (BadCredentialsException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect username or password.");
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username does not exist.");
+		}
+
+//		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
+//				authenticationRequest.getPassword()));
+//		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
+//				Md5Util.getInstance().getMd5Hash(authenticationRequest.getPassword())));
+
+//		final UserDetails userDetails = customUserDetailsService
+//				.loadUserByUsername(authenticationRequest.getUsername());
+
+		return ResponseEntity.ok().body(null);
 	}
 }
