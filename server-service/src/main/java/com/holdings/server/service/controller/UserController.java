@@ -47,6 +47,8 @@ import com.holdings.server.service.utility.IpUtils;
 import com.holdings.server.service.utility.JwtUtil;
 import com.holdings.server.service.utility.ValueValidate;
 
+import io.jsonwebtoken.Claims;
+
 @RestController
 @RequestMapping(value = { "/api" })
 public class UserController {
@@ -248,6 +250,11 @@ public class UserController {
 
 		final String jwt = jwtTokenUtil.generateToken(userDetails);
 
-		return ResponseEntity.ok().body(null);
+		Instant t = jwtTokenUtil.extractExpiration(jwt).toInstant();
+		HashMap<String, Object> res = new HashMap<>();
+		res.put("Token", jwt);
+		res.put("Expiration", t);
+		
+		return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully.", res));
 	}
 }
