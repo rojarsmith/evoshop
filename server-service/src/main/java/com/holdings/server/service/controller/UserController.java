@@ -44,6 +44,7 @@ import com.holdings.server.service.payload.UserAccountCreationRequest;
 import com.holdings.server.service.repository.ConfirmationTokenRepository;
 import com.holdings.server.service.repository.UserAccountRepository;
 import com.holdings.server.service.utility.IpUtils;
+import com.holdings.server.service.utility.JwtUtil;
 import com.holdings.server.service.utility.ValueValidate;
 
 @RestController
@@ -61,8 +62,11 @@ public class UserController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+//	@Autowired
+//	private CustomUserDetailsService customUserDetailsService;
+
 	@Autowired
-	private CustomUserDetailsService customUserDetailsService;
+	private JwtUtil jwtTokenUtil;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -240,13 +244,9 @@ public class UserController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username does not exist.");
 		}
 
-//		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
-//				authenticationRequest.getPassword()));
-//		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
-//				Md5Util.getInstance().getMd5Hash(authenticationRequest.getPassword())));
+		final UserDetails userDetails = (UserDetails) ar.getPrincipal();
 
-//		final UserDetails userDetails = customUserDetailsService
-//				.loadUserByUsername(authenticationRequest.getUsername());
+		final String jwt = jwtTokenUtil.generateToken(userDetails);
 
 		return ResponseEntity.ok().body(null);
 	}
