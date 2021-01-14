@@ -1,4 +1,4 @@
-package com.holdings.server.service.extra;
+package com.holdings.server.service.service;
 
 import javax.mail.internet.MimeMessage;
 

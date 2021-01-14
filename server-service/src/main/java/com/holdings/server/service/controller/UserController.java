@@ -33,21 +33,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.holdings.server.service.ServiceConfig;
 import com.holdings.server.service.entity.ConfirmationToken;
 import com.holdings.server.service.entity.UserAccount;
-import com.holdings.server.service.extra.CustomUserDetailsService;
-import com.holdings.server.service.extra.EmailSenderService;
-import com.holdings.server.service.extra.MailContentBuilder;
-import com.holdings.server.service.extra.MailContentBuilder.Template;
 import com.holdings.server.service.payload.ApiResponse;
 import com.holdings.server.service.payload.RefreshConfirmationTokenRequest;
 import com.holdings.server.service.payload.UserAccountAuthenticationRequest;
 import com.holdings.server.service.payload.UserAccountCreationRequest;
 import com.holdings.server.service.repository.ConfirmationTokenRepository;
 import com.holdings.server.service.repository.UserAccountRepository;
+import com.holdings.server.service.service.EmailSenderService;
+import com.holdings.server.service.service.MailContentBuilder;
+import com.holdings.server.service.service.MailContentBuilder.Template;
 import com.holdings.server.service.utility.IpUtils;
 import com.holdings.server.service.utility.JwtUtil;
 import com.holdings.server.service.utility.ValueValidate;
-
-import io.jsonwebtoken.Claims;
 
 @RestController
 @RequestMapping(value = { "/api" })
