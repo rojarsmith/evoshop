@@ -10,7 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
+import com.holdings.server.service.filter.ExceptionHandlerFilter;
 import com.holdings.server.service.filter.JwtRequestFilter;
 import com.holdings.server.service.service.CustomUserDetailsService;
 
@@ -19,6 +21,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
+	@Autowired
+	private ExceptionHandlerFilter exceptionHandlerFilter;
+	
 	@Autowired
 	private JwtRequestFilter jwtRequestFilter;
 
@@ -38,6 +43,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/api/v1/user/**").permitAll();
 
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		
+		httpSecurity.addFilterBefore(exceptionHandlerFilter, CorsFilter.class);
 	}
 
 	@Bean
