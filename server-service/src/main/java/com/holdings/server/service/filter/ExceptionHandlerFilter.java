@@ -45,6 +45,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 				resp = new ApiResponse(message, exception);
 			}
 
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.getWriter().write(convertObjectToJson(resp));
 		}
