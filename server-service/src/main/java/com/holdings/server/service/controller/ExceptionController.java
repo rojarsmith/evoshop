@@ -2,6 +2,7 @@ package com.holdings.server.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +20,10 @@ public class ExceptionController {
 		String message = "Unknown error.";
 		if (exception instanceof ResponseStatusException) {
 			message = ((ResponseStatusException) exception).getReason();
+		} else if (exception instanceof MethodArgumentNotValidException) {
+			message = ((MethodArgumentNotValidException) exception).getMessage();
 		}
+
 		System.out.println("[handleException]: " + message);
 
 		ApiResponse resp = new ApiResponse(false, message);

@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,18 +33,23 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.holdings.server.service.ServiceConfig;
 import com.holdings.server.service.entity.ConfirmationToken;
+import com.holdings.server.service.entity.ResetPassword;
 import com.holdings.server.service.entity.UserAccount;
 import com.holdings.server.service.payload.ApiResponse;
+import com.holdings.server.service.payload.ForgetPasswordRequest;
 import com.holdings.server.service.payload.RefreshConfirmationTokenRequest;
+import com.holdings.server.service.payload.ResetPasswordRequest;
 import com.holdings.server.service.payload.UserAccountAuthenticationRequest;
 import com.holdings.server.service.payload.UserAccountCreationRequest;
 import com.holdings.server.service.repository.ConfirmationTokenRepository;
+import com.holdings.server.service.repository.ResetPasswordRepository;
 import com.holdings.server.service.repository.UserAccountRepository;
 import com.holdings.server.service.service.EmailSenderService;
 import com.holdings.server.service.service.MailContentBuilder;
 import com.holdings.server.service.service.MailContentBuilder.Template;
 import com.holdings.server.service.utility.IpUtils;
 import com.holdings.server.service.utility.JwtUtil;
+import com.holdings.server.service.utility.SHA2;
 import com.holdings.server.service.utility.ValueValidate;
 
 @RestController
@@ -53,6 +59,9 @@ public class UserController {
 	private ServiceConfig serviceConfig;
 
 	@Autowired
+	private ResetPasswordRepository resetPasswordRepository;
+
+	@Autowired
 	private UserAccountRepository userAccountRepository;
 
 	@Autowired
@@ -60,9 +69,6 @@ public class UserController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-//	@Autowired
-//	private CustomUserDetailsService customUserDetailsService;
 
 	@Autowired
 	private JwtUtil jwtTokenUtil;
@@ -251,7 +257,87 @@ public class UserController {
 		HashMap<String, Object> res = new HashMap<>();
 		res.put("Token", jwt);
 		res.put("Expiration", t);
-		
+
 		return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully.", res));
+	}
+
+	@PostMapping(value = { "/v{version:\\d}/user/password/forget" })
+	public ResponseEntity<?> userPasswordForget(@Valid @RequestBody ForgetPasswordRequest request) throws Exception {
+		Optional<UserAccount> user = userAccountRepository.findByEmail(request.getEmail());
+		if (!user.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found.");
+		}
+
+		List<ResetPassword> rps = resetPasswordRepository.findByUserId(user.get().getId());
+		if (rps.size() >= 1) {
+			for (ResetPassword rp : rps) {
+				rp.setActive(false);
+			}
+			resetPasswordRepository.saveAll(rps);
+		}
+
+		Instant now = Instant.now();
+		String token = SHA2.getSHA512(now.toString()).substring(0, 16);
+
+		int retry = 0;
+		while (resetPasswordRepository.existsByToken(token)) {
+			token = SHA2.getSHA512(Instant.now().toString()).substring(0, 16);
+
+			if (retry >= 6) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ask reset password failed. Try again.");
+			}
+			retry++;
+		}
+
+		ResetPassword resetPassword = new ResetPassword();
+		resetPassword.setActive(true);
+		resetPassword.setUserId(user.get().getId());
+		resetPassword.setTime(now);
+		resetPassword.setToken(token);
+		resetPasswordRepository.save(resetPassword);
+
+		URI location = ServletUriComponentsBuilder
+				.fromUriString(serviceConfig.getClientWebDomain() + "/user/password/reset/" + token).buildAndExpand()
+				.encode().toUri();
+
+		String[] mailList = { user.get().getEmail() };
+		String mailContent = mailContentBuilder.generateMailContent(location.toString(), Template.RESET_PASSWORD);
+		emailSenderService.sendComplexEmail(mailList, emailFrom,
+				"Begin Reset password! You need to click the link for next step.", mailContent);
+
+		HashMap<String, String> res = new HashMap<>();
+		res.put("token", token);
+
+		return ResponseEntity.ok().body(new ApiResponse(true, "Ask reset password successfully.", res));
+	}
+
+	@PostMapping(value = { "/v{version:\\d}/user/password/reset" })
+	public ResponseEntity<?> userPasswordReset(@Valid @RequestBody ResetPasswordRequest request) {
+		if (!ValueValidate.validatePassword(request.getPassword())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password validate failed.");
+		}
+
+		List<ResetPassword> tokens = resetPasswordRepository.findByToken(request.getToken());
+		if (tokens.size() <= 0) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token.");
+		}
+
+		Optional<ResetPassword> token = tokens.stream().filter(e -> e.getActive().equals(true)).findFirst();
+
+		if (token.get() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non actived token.");
+		}
+
+		Optional<UserAccount> user = userAccountRepository.findById(token.get().getUserId());
+		if (!user.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Orphan token.");
+		}
+
+		token.get().setActive(false);
+		resetPasswordRepository.save(token.get());
+		user.get().setPassword(passwordEncoder.encode(request.getPassword()));
+		userAccountRepository.save(user.get());
+
+		return ResponseEntity.ok().body(new ApiResponse(true, "Reset password successfully."));
 	}
 }
