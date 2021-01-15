@@ -17,7 +17,7 @@ public class ExceptionController {
 
 	@ExceptionHandler()
 	public ResponseEntity<?> handleException(Exception exception) {
-		String message = "Unknown error.";
+		String message = exception.getMessage();
 		if (exception instanceof ResponseStatusException) {
 			message = ((ResponseStatusException) exception).getReason();
 		} else if (exception instanceof MethodArgumentNotValidException) {

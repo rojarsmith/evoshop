@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -258,7 +260,7 @@ public class UserController {
 		res.put("Token", jwt);
 		res.put("Expiration", t);
 
-		return ResponseEntity.ok().body(new ApiResponse(true, "User confirmation token refreshed successfully.", res));
+		return ResponseEntity.ok().body(new ApiResponse(true, "Create user authentication tokenconfirmation token successfully.", res));
 	}
 
 	@PostMapping(value = { "/v{version:\\d}/user/password/forget" })
@@ -339,5 +341,20 @@ public class UserController {
 		userAccountRepository.save(user.get());
 
 		return ResponseEntity.ok().body(new ApiResponse(true, "Reset password successfully."));
+	}
+
+	@GetMapping(value = { "/v{version:\\d}/user/current" })
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBER')")
+	public ResponseEntity<?> userCurrent() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		final UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+		String name = userDetails.getUsername();
+
+		Optional<UserAccount> user = userAccountRepository.findByUserName(name);
+		if (!user.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not found the user.");
+		}
+
+		return ResponseEntity.ok().body(new ApiResponse(true, "Get the current user successfully.", user.get()));
 	}
 }
