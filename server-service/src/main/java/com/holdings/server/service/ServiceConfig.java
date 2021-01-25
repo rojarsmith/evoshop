@@ -26,4 +26,12 @@ public class ServiceConfig {
 
 		return false;
 	}
+	
+	public boolean isTest() {
+		if (active.toUpperCase().equals("TEST")) {
+			return true;
+		}
+
+		return false;
+	}
 }

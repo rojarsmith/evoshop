@@ -3,6 +3,7 @@ package com.holdings.server.service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -10,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.holdings.server.service.ServiceConfig;
 import com.holdings.server.service.payload.ApiResponse;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class ExceptionController {
 	@Autowired
 	private ServiceConfig serviceConfig;

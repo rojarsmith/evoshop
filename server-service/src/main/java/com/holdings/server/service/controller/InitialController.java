@@ -41,6 +41,8 @@ public class InitialController {
 		if (serviceConfig.isDev()) {
 			initAccount();
 			initRolePermission();
+		} else if (serviceConfig.isTest()) {
+			initAccountForTest();
 		}
 	}
 
@@ -82,6 +84,29 @@ public class InitialController {
 			user.setEmail("rojarsmith@live.com");
 			user.setEmailVerified(true);
 			user.setRegisterTime(Instant.now());
+			user.setRegisterIp("127.0.0.1");
+			user.setActived(true);
+
+			userAccountRepository.save(user);
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			return false;
+		}
+		return true;
+	}
+
+	public boolean initAccountForTest() {
+		try {
+			  
+			// Add user.
+			Instant instant = Instant.parse("2021-01-02T03:04:05.06Z");
+			
+			UserAccount user = new UserAccount();
+			user.setUserName("ANEXTSOFT");
+			user.setPassword(passwordEncoder.encode("Password"));
+			user.setEmail("service@anextsoft.com");
+			user.setEmailVerified(true);
+			user.setRegisterTime(instant);
 			user.setRegisterIp("127.0.0.1");
 			user.setActived(true);
 

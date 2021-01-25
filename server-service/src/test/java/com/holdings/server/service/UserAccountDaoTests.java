@@ -18,13 +18,13 @@ class UserAccountDaoTests {
 	
 	@Test
 	void testFindByUserName() {
-		Optional<UserAccount> user = userAccountRepository.findByUserName("aa11");
-		assertEquals(user.get().getUserName(), "aa11");
+		Optional<UserAccount> user = userAccountRepository.findByUserName("ANEXTSOFT");
+		assertEquals(user.get().getUserName(), "ANEXTSOFT");
 	}
 
 	@Test
 	void testFindByEmail() {
-		Optional<UserAccount> user = userAccountRepository.findByEmail("rojarsmith@live.com");
-		assertEquals(user.get().getEmail(), "rojarsmith@live.com");
+		Optional<UserAccount> user = userAccountRepository.findByEmail("service@anextsoft.com");
+		assertEquals(user.get().getEmail(), "service@anextsoft.com");
 	}
 }
