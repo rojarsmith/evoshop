@@ -1,5 +1,6 @@
 package com.holdings.server.service.controller;
 
+import java.io.Console;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -38,12 +39,16 @@ public class InitialController {
 
 	@PostConstruct
 	private void init() {
+		boolean initResult = true;
+
 		if (serviceConfig.isDev()) {
-			initAccount();
-			initRolePermission();
+			initResult &= initAccount();
+			initResult &= initRolePermission();
 		} else if (serviceConfig.isTest()) {
-			initAccountForTest();
+			initResult &= initAccountForTest();
 		}
+
+		System.out.println("InitialController.init = " + initResult);
 	}
 
 	// Dev
@@ -95,12 +100,43 @@ public class InitialController {
 		return true;
 	}
 
+	public boolean initRolePermissionForTest() {
+//		try {
+//			// Must begin with ROLE_***
+//			Role roleAdmin = new Role("ROLE_ADMIN", "Admin");
+//			List<Permission> permissionList = permissionRepository.findAll();
+//			roleAdmin.setPermissionList(permissionList);
+//			roleRepository.save(roleAdmin);
+//
+//			Role roleMember = new Role("ROLE_MEMBER", "Member");
+//			List<String> searchMember = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
+//			List<Permission> memberPermissionList = permissionRepository.findBySymbolIn(searchMember);
+//			roleMember.setPermissionList(memberPermissionList);
+//			roleRepository.save(roleMember);
+//
+//			Role managerRole = new Role("ROLE_MANAGER", "Manager");
+//			List<String> managerSearch = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
+//			List<Permission> managerPermissions = permissionRepository.findBySymbolIn(managerSearch);
+//			managerRole.setPermissionList(managerPermissions);
+//			roleRepository.save(managerRole);
+//
+//			Role role2 = new Role("ROLE_GUEST", "Guest");
+//			Optional<Permission> permissionList2 = permissionRepository.findBySymbol("GUEST_AREA");
+//			List<Permission> list = Arrays.asList(permissionList2.get());
+//			role2.setPermissionList(list);
+//			roleRepository.save(role2);
+//		} catch (Exception e) {
+//			System.out.println(e.toString());
+//			return false;
+//		}
+		return true;
+	}
+
 	public boolean initAccountForTest() {
 		try {
-			  
 			// Add user.
 			Instant instant = Instant.parse("2021-01-02T03:04:05.06Z");
-			
+
 			UserAccount user = new UserAccount();
 			user.setUserName("ANEXTSOFT");
 			user.setPassword(passwordEncoder.encode("Password"));
