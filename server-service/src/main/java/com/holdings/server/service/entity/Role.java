@@ -1,7 +1,8 @@
 package com.holdings.server.service.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,40 +18,34 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "role", uniqueConstraints = { @UniqueConstraint(columnNames = "symbol") })
+@Table(name = "role", uniqueConstraints = { @UniqueConstraint(columnNames = "name") })
 public class Role implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2496144486439878279L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	/**
-	 * Role symbol
-	 */
 	@NotNull
-	private String symbol;
+	private String name;
 
 	/**
-	 * Role info
+	 * Role description
 	 */
 	@NotNull
-	private String info;
+	private String description;
 
 	/**
 	 * Role's permission
 	 */
-	@ManyToMany(targetEntity = Permission.class, fetch = FetchType.LAZY)
-	private List<Permission> permissionList;
+	@ManyToMany(targetEntity = Permission.class, fetch = FetchType.EAGER)
+	private Collection<Permission> permissions = new ArrayList<>();
 
 	public Role() {
 	}
 
 	public Role(@NotNull String symbol, @NotNull String info) {
-		this.symbol = symbol;
-		this.info = info;
+		this.name = symbol;
+		this.description = info;
 	}
 }

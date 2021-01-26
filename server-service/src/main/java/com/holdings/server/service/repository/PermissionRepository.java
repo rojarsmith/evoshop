@@ -10,7 +10,7 @@ import com.holdings.server.service.entity.Permission;
 
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, Long> {
-	Optional<Permission> findBySymbol(String symbol);
+	Optional<Permission> findByName(String name);
 
-	List<Permission> findBySymbolIn(List<String> symbols);
+	List<Permission> findByNameIn(List<String> names);
 }

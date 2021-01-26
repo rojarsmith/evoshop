@@ -10,7 +10,7 @@ import com.holdings.server.service.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-	Optional<Role> findBySymbol(String symbol);
+	Optional<Role> findByName(String name);
 
-	List<Role> findBySymbolIn(List<String> symbols);
+	List<Role> findByNameIn(List<String> names);
 }

@@ -1,10 +1,7 @@
 package com.holdings.server.service.controller;
 
-import java.io.Console;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -42,9 +39,11 @@ public class InitialController {
 		boolean initResult = true;
 
 		if (serviceConfig.isDev()) {
-			initResult &= initAccount();
 			initResult &= initRolePermission();
+			initResult &= initAccount();
+
 		} else if (serviceConfig.isTest()) {
+			initResult &= initRolePermissionForTest();
 			initResult &= initAccountForTest();
 		}
 
@@ -53,29 +52,29 @@ public class InitialController {
 
 	// Dev
 	public boolean initRolePermission() {
-		// Must begin with ROLE_***
-		Role role = new Role("ROLE_ADMIN", "Admin");
-		List<Permission> permissionList = permissionRepository.findAll();
-		role.setPermissionList(permissionList);
-		roleRepository.save(role);
-
-		Role roleMember = new Role("ROLE_MEMBER", "Member");
-		List<String> search = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
-		List<Permission> memberPermissionList = permissionRepository.findBySymbolIn(search);
-		roleMember.setPermissionList(memberPermissionList);
-		roleRepository.save(roleMember);
-
-		Role managerRole = new Role("ROLE_MANAGER", "Manager");
-		List<String> managerSearch = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
-		List<Permission> managerPermissions = permissionRepository.findBySymbolIn(managerSearch);
-		managerRole.setPermissionList(managerPermissions);
-		roleRepository.save(managerRole);
-
-		Role role2 = new Role("ROLE_GUEST", "Guest");
-		Optional<Permission> permissionList2 = permissionRepository.findBySymbol("GUEST_AREA");
-		List<Permission> list = Arrays.asList(permissionList2.get());
-		role2.setPermissionList(list);
-		roleRepository.save(role2);
+//		// Must begin with ROLE_***
+//		Role role = new Role("ROLE_ADMIN", "Admin");
+//		List<Permission> permissionList = permissionRepository.findAll();
+//		role.setPermissionList(permissionList);
+//		roleRepository.save(role);
+//
+//		Role roleMember = new Role("ROLE_MEMBER", "Member");
+//		List<String> search = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
+//		List<Permission> memberPermissionList = permissionRepository.findBySymbolIn(search);
+//		roleMember.setPermissionList(memberPermissionList);
+//		roleRepository.save(roleMember);
+//
+//		Role managerRole = new Role("ROLE_MANAGER", "Manager");
+//		List<String> managerSearch = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
+//		List<Permission> managerPermissions = permissionRepository.findBySymbolIn(managerSearch);
+//		managerRole.setPermissionList(managerPermissions);
+//		roleRepository.save(managerRole);
+//
+//		Role role2 = new Role("ROLE_GUEST", "Guest");
+//		Optional<Permission> permissionList2 = permissionRepository.findBySymbol("GUEST_AREA");
+//		List<Permission> list = Arrays.asList(permissionList2.get());
+//		role2.setPermissionList(list);
+//		roleRepository.save(role2);
 
 		return true;
 	}
@@ -101,34 +100,28 @@ public class InitialController {
 	}
 
 	public boolean initRolePermissionForTest() {
-//		try {
-//			// Must begin with ROLE_***
-//			Role roleAdmin = new Role("ROLE_ADMIN", "Admin");
-//			List<Permission> permissionList = permissionRepository.findAll();
-//			roleAdmin.setPermissionList(permissionList);
-//			roleRepository.save(roleAdmin);
-//
-//			Role roleMember = new Role("ROLE_MEMBER", "Member");
-//			List<String> searchMember = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
-//			List<Permission> memberPermissionList = permissionRepository.findBySymbolIn(searchMember);
-//			roleMember.setPermissionList(memberPermissionList);
-//			roleRepository.save(roleMember);
-//
-//			Role managerRole = new Role("ROLE_MANAGER", "Manager");
-//			List<String> managerSearch = List.of("ACCOUNT_DETAIL_PANEL", "GUEST_AREA");
-//			List<Permission> managerPermissions = permissionRepository.findBySymbolIn(managerSearch);
-//			managerRole.setPermissionList(managerPermissions);
-//			roleRepository.save(managerRole);
-//
-//			Role role2 = new Role("ROLE_GUEST", "Guest");
-//			Optional<Permission> permissionList2 = permissionRepository.findBySymbol("GUEST_AREA");
-//			List<Permission> list = Arrays.asList(permissionList2.get());
-//			role2.setPermissionList(list);
-//			roleRepository.save(role2);
-//		} catch (Exception e) {
-//			System.out.println(e.toString());
-//			return false;
-//		}
+		try {
+			// Must begin with ROLE_***
+			Role roleAdmin = new Role("ROLE_ADMIN", "Admin");
+			List<Permission> permissionList = permissionRepository.findAll();
+			roleAdmin.setPermissions(permissionList);
+			roleRepository.save(roleAdmin);
+
+			Role roleMember = new Role("ROLE_MEMBER", "Member");
+			List<String> searchMember = List.of("READ_LAB1");
+			List<Permission> memberPermissionList = permissionRepository.findByNameIn(searchMember);
+			roleMember.setPermissions(memberPermissionList);
+			roleRepository.save(roleMember);
+
+			Role managerRole = new Role("ROLE_MANAGER", "Manager");
+			List<String> managerSearch = List.of("READ_LAB2", "WRITE_LAB2");
+			List<Permission> managerPermissions = permissionRepository.findByNameIn(managerSearch);
+			managerRole.setPermissions(managerPermissions);
+			roleRepository.save(managerRole);
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			return false;
+		}
 		return true;
 	}
 

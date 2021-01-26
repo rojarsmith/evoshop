@@ -1,9 +1,8 @@
 DELETE FROM role_permission;
-
+DELETE FROM user_account_role;
 DELETE FROM permission;
 DELETE FROM role;
 
-INSERT INTO "permission" ("id", "symbol", "info") VALUES(1, 'ACCOUNT_PANEL', 'Account Panel');
-INSERT INTO "permission" ("id", "symbol", "info") VALUES(2, 'ADMIN_PANEL', 'Admin Panel');
-INSERT INTO "permission" ("id", "symbol", "info") VALUES(4, 'PRODUCT_MANAGE_PANEL', 'Product Manage Panel');
-INSERT INTO "permission" ("id", "symbol", "info") VALUES(3, 'GUEST_AREA', 'Guest Area');
+INSERT INTO "permission" ("id", "name", "description") VALUES(1, 'READ_LAB1', 'Read');
+INSERT INTO "permission" ("id", "name", "description") VALUES(2, 'READ_LAB2', 'Read');
+INSERT INTO "permission" ("id", "name", "description") VALUES(3, 'WRITE_LAB2', 'Read');
