@@ -44,8 +44,8 @@ public class Role implements Serializable {
 	public Role() {
 	}
 
-	public Role(@NotNull String symbol, @NotNull String info) {
-		this.name = symbol;
-		this.description = info;
+	public Role(@NotNull String name, @NotNull String description) {
+		this.name = name;
+		this.description = description;
 	}
 }

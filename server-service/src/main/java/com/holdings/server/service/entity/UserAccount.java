@@ -1,7 +1,7 @@
 package com.holdings.server.service.entity;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +44,7 @@ public class UserAccount {
 	private Boolean actived = false;
 
 	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
-	private List<Role> roleList;
+	private Collection<Role> roleList;
 
 	// region Privacy
 	private String realName;

@@ -1,7 +1,9 @@
 package com.holdings.server.service.controller;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -47,7 +49,7 @@ public class InitialController {
 			initResult &= initAccountForTest();
 		}
 
-		System.out.println("InitialController.init = " + initResult);
+		System.out.println("[InitialController.init] " + initResult);
 	}
 
 	// Dev
@@ -139,6 +141,11 @@ public class InitialController {
 			user.setRegisterIp("127.0.0.1");
 			user.setActived(true);
 
+			Optional<Role> role = roleRepository.findByName("ROLE_ADMIN");
+			ArrayList<Role> roles = new ArrayList<Role>();
+			roles.add(role.get());
+			user.setRoleList(roles);
+			
 			userAccountRepository.save(user);
 		} catch (Exception e) {
 			System.out.println(e.toString());
